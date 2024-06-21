@@ -51,7 +51,14 @@ namespace CorporatePortalAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(task).State = EntityState.Modified;
+			var project = await _context.Projects.FindAsync(task.ProjectId);
+			if (project == null)
+			{
+				return NotFound($"Project with ID {task.ProjectId} not found.");
+			}
+			task.Project = project;
+
+			_context.Entry(task).State = EntityState.Modified;
 
             try
             {
@@ -77,8 +84,15 @@ namespace CorporatePortalAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Models.Task>> PostTask(Models.Task task)
         {
+            var project = await _context.Projects.FindAsync(task.ProjectId);
+            if (project == null)
+            {
+                return NotFound($"Project with ID {task.ProjectId} not found.");
+            }
+            task.Project = project;
             _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
+
 
             return CreatedAtAction("GetTask", new { id = task.Id }, task);
         }

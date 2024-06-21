@@ -15,6 +15,5 @@ public partial class Task
     public bool IsActive { get; set; }
     [JsonIgnore]
     public virtual ICollection<Entry> Entries { get; set; } = new List<Entry>();
-    [JsonIgnore]
-    public virtual Project Project { get; set; } = null!;
+	public virtual Project Project { get; set; } = null!;
 }

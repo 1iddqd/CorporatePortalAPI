@@ -26,6 +26,7 @@ public partial class CorporatePortalContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
         modelBuilder.Entity<Entry>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("Entry_pkey");
