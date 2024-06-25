@@ -27,6 +27,13 @@ namespace CorporatePortalAPI.Controllers
             return await _context.Tasks.ToListAsync();
         }
 
+        [HttpGet("ActiveTasks")]
+        public async Task<ActionResult<IEnumerable<Models.Task>>> GetActiveTasks()
+        {
+            var activeTasks = await _context.Tasks.Where(p => p.IsActive == true).ToListAsync();
+            return activeTasks;
+        }
+
         // GET: api/Tasks/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Models.Task>> GetTask(int id)

@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CorporatePortalAPI.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Text.Json;
+using Microsoft.Extensions.Options;
 
 namespace CorporatePortalAPI.Controllers
 {
@@ -77,6 +80,12 @@ namespace CorporatePortalAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Entry>> PostEntry(Entry entry)
         {
+            var task = await _context.Tasks.FindAsync(entry.TaskId);
+            if (task == null)
+            {
+                return NotFound($"Task with ID {entry.TaskId} not found.");
+            }
+            entry.Task = task;
             _context.Entries.Add(entry);
             await _context.SaveChangesAsync();
 
