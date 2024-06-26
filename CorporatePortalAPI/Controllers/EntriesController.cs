@@ -80,12 +80,28 @@ namespace CorporatePortalAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Entry>> PostEntry(Entry entry)
         {
+            if(entry.Date < new DateOnly(2001, 01, 01))
+                return BadRequest("Проверьте вводимую дату.");
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Проверьте вводимые данные.");
+            }
             var task = await _context.Tasks.FindAsync(entry.TaskId);
             if (task == null)
             {
-                return NotFound($"Task with ID {entry.TaskId} not found.");
+                return NotFound("Задача не найдена.");
             }
             entry.Task = task;
+
+            var entriesForDate = await _context.Entries.Where(e => e.Date == entry.Date).ToListAsync();
+
+            var totalHoursForDate = entriesForDate.Sum(e => e.Hours) + entry.Hours;
+
+            if (totalHoursForDate > 24)
+            {
+                return BadRequest("Суммарное количество часов для выбранной даты не может превышать 24.");
+            }
+
             _context.Entries.Add(entry);
             await _context.SaveChangesAsync();
 
